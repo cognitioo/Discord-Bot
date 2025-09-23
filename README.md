@@ -29,7 +29,7 @@ A feature-rich Discord bot built in **Python** using **discord.py**, with modera
 ---
 
 # 1. Clone the repository (or download the ZIP)
-git clone https://github.com/your-username/discord-bot.git
+git clone https://github.com/cognitioo/discord-bot.git
 cd discord-bot
 
 # 2. (Optional) Create a virtual environment
