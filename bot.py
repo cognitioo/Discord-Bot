@@ -30,6 +30,12 @@ intents.members = True
 # Create bot instance- 
 bot = commands.Bot(command_prefix='/', intents=intents)
 
+
+#for loading the extension
+async def setup_hook():
+    await bot.load_extension("spam_prevention")
+bot.setup_hook = setup_hook
+
 #some events here- 
 @bot.event
 async def on_ready():
@@ -48,13 +54,20 @@ async def on_member_remove(member):
 async def on_message(message):
     if message.author == bot.user:
         return
-    
+
+    # bad word filter
     bad_words = ["shit", "fuck", "motherfucker", "uncleTom", "fucker"]
     if any(word in message.content.lower() for word in bad_words):
         await message.delete()
         await message.channel.send(f"{message.author.mention}, Don't use that word!")
-    
+
+    # make sure commands still work
     await bot.process_commands(message)
+
+    # forward message to SpamPrevention cog (so both filters work)
+    sp = bot.get_cog("SpamPrevention")
+    if sp:
+        await sp.check_message(message)  
 
 #commands here-
 @bot.command()
@@ -145,6 +158,8 @@ async def poll(ctx, *, question: str):
     except Exception as e:
         await ctx.send(f"An unexpected error occurred: {e}")
         logging.error(f"Poll command error: {e}")
+
+
 
 # run this bot 
 bot.run(token, log_level=logging.DEBUG)
